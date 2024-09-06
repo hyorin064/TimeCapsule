@@ -109,4 +109,15 @@ function displayCapsules() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', displayCapsules);
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById('myForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // 폼 제출 방지
+        const inputCode = document.getElementById('verificationCodeInput').value.trim();
+        console.log(inputCode); // 입력한 코드를 콘솔에 출력
+    });
+});
+
+
+
+
