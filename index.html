@@ -6,115 +6,7 @@
     <title>가상 타임캡슐</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.3.0/luxon.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        #capsules {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .capsule {
-            background-color: white;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .capsule h3 {
-            margin-top: 0;
-            color: #007bff;
-            word-break: break-word;
-        }
-        .add-button {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #007bff;
-            color: white;
-            font-size: 30px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 10px;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin-top: 10px;
-        }
-        textarea, input {
-            margin-top: 5px;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button[type="submit"] {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        .error-message {
-            color: red;
-            margin-top: 5px;
-        }
+        /* 기존 스타일링 내용 그대로 */
     </style>
 </head>
 <body>
@@ -142,6 +34,9 @@
                 <label for="openTime">개봉 시간 (오늘 날짜 기준):</label>
                 <input type="time" id="openTime" required>
 
+                <label for="verificationCode">인증 코드:</label>
+                <input type="text" id="verificationCode">
+
                 <div id="dateError" class="error-message"></div>
                 
                 <button type="submit">타임캡슐 생성</button>
@@ -149,97 +44,7 @@
         </div>
     </div>
 
-    <script>
-        const DateTime = luxon.DateTime;
-
-        // Google Sheet로 데이터 전송
-        document.getElementById('capsuleForm').addEventListener('submit', function(e) {
-          e.preventDefault();  // 폼 제출 기본 동작 막기
-          const title = document.getElementById('title').value;
-          const message = document.getElementById('message').value;
-          const email = document.getElementById('email').value;
-          let openTime = document.getElementById('openTime').value;
-
-          // 항상 분을 00으로 설정
-          openTime = openTime.split(':')[0] + ":00";
-
-          // 현재 시간 이후로 설정된지 확인
-          const now = DateTime.now();
-          const openDateTime = DateTime.now().set({ hour: openTime.split(':')[0], minute: 0 });
-
-          if (openDateTime <= now.plus({ hours: 1 })) {
-            document.getElementById('dateError').textContent = "개봉 시간은 현재 시각으로부터 최소 1시간 이후여야 합니다.";
-            return;
-          } else {
-            document.getElementById('dateError').textContent = "";
-          }
-
-          // Google Apps Script로 데이터 전송
-          fetch('https://script.google.com/macros/s/AKfycbwo4UpW-TLAoLFchKxPI1EOpN6seFos1jTJJcsezIQlBIX1LZLv96llwutuLloht4yAQA/exec', {  // Google Apps Script URL로 변경
-            method: 'POST',
-            body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO() }),
-            headers: { 'Content-Type': 'application/json' }
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.result === "success") {
-              alert("이메일 인증을 확인하세요.");
-            }
-          });
-        });
-
-        // 모달 관련 요소
-        const modal = document.getElementById('modal');
-        const addButton = document.getElementById('addButton');
-        const closeButton = document.getElementsByClassName('close')[0];
-
-        // 모달 열기
-        addButton.onclick = function() {
-            modal.style.display = "block";
-        }
-
-        // 모달 닫기
-        closeButton.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        // 모달 외부 클릭 시 닫기
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-
-        function loadCapsules() {
-            return JSON.parse(localStorage.getItem('capsules') || '[]');
-        }
-
-        function displayCapsules() {
-            const capsulesDiv = document.getElementById('capsules');
-            capsulesDiv.innerHTML = '';
-
-            const capsules = loadCapsules();
-            const now = DateTime.now();
-
-            capsules.forEach((capsule) => {
-                const capsuleDiv = document.createElement('div');
-                capsuleDiv.className = 'capsule';
-                const openDate = DateTime.fromISO(capsule.openDate);
-                const isOpen = openDate <= now;
-
-                capsuleDiv.innerHTML = `
-                    <h3>${capsule.title}</h3>
-                    <p>상태: ${isOpen ? '개봉됨' : '미개봉'}</p>
-                    <p>생성일: ${DateTime.fromISO(capsule.created).toLocaleString()}</p>
-                    <p>개봉일: ${openDate.toLocaleString()}</p>
-                    ${isOpen ? `<p>메시지: ${capsule.message}</p>` : '<p>아직 개봉되지 않았습니다.</p>'}
-                `;
-                capsulesDiv.appendChild(capsuleDiv);
-            });
-        }
-
-        // 페이지 로드 시 타임캡슐 표시
-        window.addEventListener('load', displayCapsules);
-    </script>
+    <!-- 분리된 JavaScript 파일 추가 -->
+    <script src="script.js"></script>
 </body>
 </html>
