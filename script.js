@@ -52,7 +52,7 @@ document.getElementById('verificationButton').addEventListener('click', function
     alert("이메일을 입력해주세요.");
     return;
   }
-
+ 
   // Google Apps Script로 인증 코드 요청
   fetch('https://script.google.com/macros/s/AKfycbx3bByWmFRO0Xe4jyTOY31jr-AAcC4OV9FHFDau0XLYAhoaMMIehmI-aFoXIjM8uGe1TQ/exec', {
     method: 'POST',
