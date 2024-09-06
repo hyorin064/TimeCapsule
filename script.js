@@ -28,7 +28,7 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   const message = document.getElementById('message').value;
   const email = document.getElementById('email').value;
   const openTime = document.getElementById('openTime').value;
-  const verificationCode = document.getElementById('verificationCode').value;
+  const verificationCode = document.getElementById('verificationCodeInput').value;
 
   // 현재 시간과 비교하여 과거 시간이 아닌지 확인
   const now = DateTime.now();
