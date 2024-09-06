@@ -49,6 +49,7 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   })
   .then(response => response.json())
   .then(data => {
+    console.log("Server response:", data);
     if (data.result === "success") {
       alert("이메일 인증을 확인하세요.");
     } else if (data.result === "verified") {
