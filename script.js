@@ -3,7 +3,7 @@ const DateTime = luxon.DateTime;
 // 인증 코드 요청 버튼 클릭 이벤트
 document.getElementById('verificationButton').addEventListener('click', function() {
   const email = document.getElementById('email').value;
-  fetch('https://script.google.com/macros/s/AKfycbx3bByWmFRO0Xe4jyTOY31jr-AAcC4OV9FHFDau0XLYAhoaMMIehmI-aFoXIjM8uGe1TQ/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbzEt2rudUfDg6-NuqSNLwJLeJtwEmCQZNX4D-uHNglXFMmvwYqynQzWyFZDg_VRuZvPiw/exec', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email })
@@ -41,7 +41,7 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   }
 
   // Google Apps Script로 데이터 전송
-  fetch('https://script.google.com/macros/s/AKfycbx3bByWmFRO0Xe4jyTOY31jr-AAcC4OV9FHFDau0XLYAhoaMMIehmI-aFoXIjM8uGe1TQ/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbzEt2rudUfDg6-NuqSNLwJLeJtwEmCQZNX4D-uHNglXFMmvwYqynQzWyFZDg_VRuZvPiw/exec', {
     method: 'POST',
     body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode }),
     headers: { 'Content-Type': 'application/json' }
