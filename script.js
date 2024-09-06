@@ -25,7 +25,7 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   }
 
   // Google Apps Script로 데이터 전송
-  fetch('https://script.google.com/macros/s/AKfycbwm9ronHQowBh_TG2PH00H_IBlOUK-e52OHzqSAZHq8D7LqyAkQff--2btjWjbX3ZZa1Q/exec', {
+  fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbx3bByWmFRO0Xe4jyTOY31jr-AAcC4OV9FHFDau0XLYAhoaMMIehmI-aFoXIjM8uGe1TQ/exec', {
     method: 'POST',
     body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode }),
     headers: { 'Content-Type': 'application/json' }
@@ -54,7 +54,7 @@ document.getElementById('verificationButton').addEventListener('click', function
   }
 
   // Google Apps Script로 인증 코드 요청
-  fetch('https://script.google.com/macros/s/AKfycbwm9ronHQowBh_TG2PH00H_IBlOUK-e52OHzqSAZHq8D7LqyAkQff--2btjWjbX3ZZa1Q/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbx3bByWmFRO0Xe4jyTOY31jr-AAcC4OV9FHFDau0XLYAhoaMMIehmI-aFoXIjM8uGe1TQ/exec', {
     method: 'POST',
     body: JSON.stringify({ email }),
     headers: { 'Content-Type': 'application/json' }
