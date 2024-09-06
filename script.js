@@ -3,7 +3,7 @@ const DateTime = luxon.DateTime;
 // 인증 코드 요청 버튼 클릭 이벤트
 document.getElementById('verificationButton').addEventListener('click', function() {
   const email = document.getElementById('email').value;
-  fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzMd7KUTzZCjKt7AQ7JqgILy0jb1MCV5rpttn_fjE0TzZ9TtTCwRGSpRIgh6ZU3uMaFWw/exec', {
+  fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbxx0y_aIXcX3doRSi7-JkrSxjdJfsbL6ASkk9XsHTsoDk7Yg07x_4p2-BN1a93Fb55BdQ/exec', {
     method: 'POST',
     
     headers: { 'Content-Type': 'application/json' },
@@ -42,7 +42,7 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   }
 
   // Google Apps Script로 데이터 전송
-  fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzMd7KUTzZCjKt7AQ7JqgILy0jb1MCV5rpttn_fjE0TzZ9TtTCwRGSpRIgh6ZU3uMaFWw/exec', {
+  fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbxx0y_aIXcX3doRSi7-JkrSxjdJfsbL6ASkk9XsHTsoDk7Yg07x_4p2-BN1a93Fb55BdQ/exec', {
     method: 'POST',
     body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode }),
     headers: { 'Content-Type': 'application/json' }
