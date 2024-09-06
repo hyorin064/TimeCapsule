@@ -5,6 +5,7 @@ document.getElementById('verificationButton').addEventListener('click', function
   const email = document.getElementById('email').value;
   fetch('https://script.google.com/macros/s/AKfycbzEt2rudUfDg6-NuqSNLwJLeJtwEmCQZNX4D-uHNglXFMmvwYqynQzWyFZDg_VRuZvPiw/exec', {
     method: 'POST',
+    
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email })
   })
