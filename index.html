@@ -139,8 +139,8 @@
                 <label for="email">이메일:</label>
                 <input type="email" id="email" required>
 
-                <label for="openDateTime">개봉 날짜 및 시간:</label>
-                <input type="datetime-local" id="openDateTime" required>
+                <label for="openTime">개봉 시간 (오늘 날짜 기준):</label>
+                <input type="time" id="openTime" required>
 
                 <div id="dateError" class="error-message"></div>
                 
@@ -158,12 +158,23 @@
           const title = document.getElementById('title').value;
           const message = document.getElementById('message').value;
           const email = document.getElementById('email').value;
-          const openDateTime = document.getElementById('openDateTime').value;
+          const openTime = document.getElementById('openTime').value;
+
+          // 현재 시간 이후로 설정된지 확인
+          const now = DateTime.now();
+          const openDateTime = DateTime.now().set({ hour: openTime.split(':')[0], minute: openTime.split(':')[1] });
+
+          if (openDateTime <= now.plus({ hours: 1 })) {
+            document.getElementById('dateError').textContent = "개봉 시간은 현재 시각으로부터 최소 1시간 이후여야 합니다.";
+            return;
+          } else {
+            document.getElementById('dateError').textContent = "";
+          }
 
           // Google Apps Script로 데이터 전송
-          fetch('https://script.google.com/macros/s/AKfycbwo4UpW-TLAoLFchKxPI1EOpN6seFos1jTJJcsezIQlBIX1LZLv96llwutuLloht4yAQA/exec', {  // Google Apps Script URL로 변경
+          fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {  // Google Apps Script URL로 변경
             method: 'POST',
-            body: JSON.stringify({ title, message, email, openDate: openDateTime }),
+            body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO() }),
             headers: { 'Content-Type': 'application/json' }
           })
           .then(response => response.json())
@@ -178,17 +189,10 @@
         const modal = document.getElementById('modal');
         const addButton = document.getElementById('addButton');
         const closeButton = document.getElementsByClassName('close')[0];
-        const openDateInput = document.getElementById('openDateTime');
-        const dateError = document.getElementById('dateError');
-
-        // 개봉일 최소값 설정 (내일)
-        const tomorrow = DateTime.now().plus({ days: 1 }).toISODate();
-        openDateInput.min = tomorrow;
 
         // 모달 열기
         addButton.onclick = function() {
             modal.style.display = "block";
-            openDateInput.value = tomorrow;  // 기본값을 내일로 설정
         }
 
         // 모달 닫기
@@ -202,19 +206,6 @@
                 modal.style.display = "none";
             }
         }
-
-        // 날짜 유효성 검사
-        openDateInput.addEventListener('change', function() {
-            const selectedDate = DateTime.fromISO(this.value);
-            const today = DateTime.now().startOf('day');
-
-            if (selectedDate <= today) {
-                dateError.textContent = "개봉일은 내일 이후여야 합니다.";
-                this.value = tomorrow;
-            } else {
-                dateError.textContent = "";
-            }
-        });
 
         function loadCapsules() {
             return JSON.parse(localStorage.getItem('capsules') || '[]');
