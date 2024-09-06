@@ -1,6 +1,6 @@
 const DateTime = luxon.DateTime;
 
-// Google Sheet로 데이터 전송
+// 타임캡슐 생성 이벤트
 document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   e.preventDefault();
   
@@ -10,12 +10,12 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   let openTime = document.getElementById('openTime').value;
   const verificationCode = document.getElementById('verificationCode').value;
 
-  // 항상 분을 00으로 설정
-  openTime = openTime.split(':')[0] + ":00";
-
   // 현재 시간과 비교하여 과거 시간이 아닌지 확인
   const now = DateTime.now();
-  const openDateTime = DateTime.now().set({ hour: openTime.split(':')[0], minute: 0 });
+  const openDateTime = DateTime.now().set({
+    hour: openTime.split(':')[0], 
+    minute: openTime.split(':')[1]
+  });
 
   if (openDateTime <= now.plus({ minutes: 1 })) {
     document.getElementById('dateError').textContent = "개봉 시간은 현재 시각으로부터 최소 1분 이후여야 합니다.";
@@ -25,19 +25,46 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   }
 
   // Google Apps Script로 데이터 전송
-  fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbwm9ronHQowBh_TG2PH00H_IBlOUK-e52OHzqSAZHq8D7LqyAkQff--2btjWjbX3ZZa1Q/exec', {
     method: 'POST',
     body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode }),
     headers: { 'Content-Type': 'application/json' }
   })
   .then(response => response.json())
   .then(data => {
-    if (data.result === "success") {
+    if (data.result === "verified") {
+      alert("타임캡슐이 등록되었습니다.");
+    } else if (data.result === "success") {
       alert("이메일 인증을 확인하세요.");
-    } else if (data.result === "verified") {
-      alert("이메일 인증이 완료되었습니다. 타임캡슐이 생성되었습니다.");
     } else {
       alert("인증 실패. 다시 시도해주세요.");
+    }
+  });
+});
+
+// 인증 코드 받기 버튼 클릭 이벤트
+document.getElementById('verificationButton').addEventListener('click', function(e) {
+  e.preventDefault();
+  
+  const email = document.getElementById('email').value;
+
+  if (!email) {
+    alert("이메일을 입력해주세요.");
+    return;
+  }
+
+  // Google Apps Script로 인증 코드 요청
+  fetch('https://script.google.com/macros/s/AKfycbwm9ronHQowBh_TG2PH00H_IBlOUK-e52OHzqSAZHq8D7LqyAkQff--2btjWjbX3ZZa1Q/exec', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.result === "success") {
+      alert("이메일로 인증 코드가 발송되었습니다.");
+    } else {
+      alert("인증 코드 발송에 실패했습니다. 다시 시도해주세요.");
     }
   });
 });
@@ -64,10 +91,12 @@ window.onclick = function(event) {
     }
 }
 
+// 로컬 스토리지에서 타임캡슐 불러오기
 function loadCapsules() {
     return JSON.parse(localStorage.getItem('capsules') || '[]');
 }
 
+// 타임캡슐 화면에 표시
 function displayCapsules() {
     const capsulesDiv = document.getElementById('capsules');
     capsulesDiv.innerHTML = '';

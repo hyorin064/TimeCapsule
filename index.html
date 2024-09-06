@@ -99,7 +99,7 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        button[type="submit"] {
+        button[type="submit"], button#verificationButton {
             margin-top: 15px;
             padding: 10px;
             background-color: #007bff;
@@ -108,7 +108,7 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        button[type="submit"]:hover {
+        button[type="submit"]:hover, button#verificationButton:hover {
             background-color: #0056b3;
         }
         .error-message {
@@ -145,6 +145,8 @@
                 <label for="verificationCode">인증 코드:</label>
                 <input type="text" id="verificationCode">
 
+                <button id="verificationButton">인증 코드 받기</button>
+
                 <div id="dateError" class="error-message"></div>
                 
                 <button type="submit">타임캡슐 생성</button>
@@ -152,7 +154,6 @@
         </div>
     </div>
 
-    <!-- 분리된 JavaScript 파일 추가 -->
-    <script src="script.js"></script> <!-- 이 부분이 외부 JavaScript 파일을 로드하는 부분입니다. -->
+    <script src="script.js"></script>
 </body>
 </html>
