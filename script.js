@@ -110,26 +110,21 @@ function displayCapsules() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    // 폼과 입력 요소를 찾고 이벤트 리스너를 추가합니다.
-    const form = document.getElementById('capsuleForm');
+    // DOM이 완전히 로드된 후에 실행할 코드
     const verificationCodeInput = document.getElementById('verificationCodeInput');
-
-
+    const form = document.getElementById('capsuleForm');
 
     if (form && verificationCodeInput) {
         form.addEventListener('submit', function(e) {
             e.preventDefault(); // 폼 제출 방지
-
-            // 입력한 코드를 가져와서 공백을 제거합니다.
             const inputCode = verificationCodeInput.value.trim();
             console.log(inputCode); // 입력한 코드를 콘솔에 출력
-
-            // 여기에 인증 코드와 관련된 로직을 추가합니다.
         });
     } else {
         console.error('폼 또는 입력 요소를 찾을 수 없습니다.');
     }
 });
+
 
 
 
