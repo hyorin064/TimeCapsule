@@ -1,21 +1,37 @@
 const DateTime = luxon.DateTime;
 
-// 타임캡슐 생성 이벤트
+// 인증 코드 요청 버튼 클릭 이벤트
+document.getElementById('verificationButton').addEventListener('click', function() {
+  const email = document.getElementById('email').value;
+  fetch('https://script.google.com/macros/s/AKfycbx3bByWmFRO0Xe4jyTOY31jr-AAcC4OV9FHFDau0XLYAhoaMMIehmI-aFoXIjM8uGe1TQ/exec', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.result === 'success') {
+      alert('인증 코드가 이메일로 발송되었습니다.');
+    } else {
+      alert('문제가 발생했습니다.');
+    }
+  })
+  .catch(error => console.error('Error:', error));
+});
+
+// 타임캡슐 생성 폼 제출 이벤트
 document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   e.preventDefault();
   
   const title = document.getElementById('title').value;
   const message = document.getElementById('message').value;
   const email = document.getElementById('email').value;
-  let openTime = document.getElementById('openTime').value;
+  const openTime = document.getElementById('openTime').value;
   const verificationCode = document.getElementById('verificationCode').value;
 
   // 현재 시간과 비교하여 과거 시간이 아닌지 확인
   const now = DateTime.now();
-  const openDateTime = DateTime.now().set({
-    hour: openTime.split(':')[0], 
-    minute: openTime.split(':')[1]
-  });
+  const openDateTime = DateTime.fromISO(openTime);
 
   if (openDateTime <= now.plus({ minutes: 1 })) {
     document.getElementById('dateError').textContent = "개봉 시간은 현재 시각으로부터 최소 1분 이후여야 합니다.";
@@ -25,46 +41,19 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   }
 
   // Google Apps Script로 데이터 전송
-  fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbx3bByWmFRO0Xe4jyTOY31jr-AAcC4OV9FHFDau0XLYAhoaMMIehmI-aFoXIjM8uGe1TQ/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbx3bByWmFRO0Xe4jyTOY31jr-AAcC4OV9FHFDau0XLYAhoaMMIehmI-aFoXIjM8uGe1TQ/exec', {
     method: 'POST',
     body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode }),
     headers: { 'Content-Type': 'application/json' }
   })
   .then(response => response.json())
   .then(data => {
-    if (data.result === "verified") {
-      alert("타임캡슐이 등록되었습니다.");
-    } else if (data.result === "success") {
+    if (data.result === "success") {
       alert("이메일 인증을 확인하세요.");
+    } else if (data.result === "verified") {
+      alert("이메일 인증이 완료되었습니다. 타임캡슐이 생성되었습니다.");
     } else {
       alert("인증 실패. 다시 시도해주세요.");
-    }
-  });
-});
-
-// 인증 코드 받기 버튼 클릭 이벤트
-document.getElementById('verificationButton').addEventListener('click', function(e) {
-  e.preventDefault();
-  
-  const email = document.getElementById('email').value;
-
-  if (!email) {
-    alert("이메일을 입력해주세요.");
-    return;
-  }
- 
-  // Google Apps Script로 인증 코드 요청
-  fetch('https://script.google.com/macros/s/AKfycbx3bByWmFRO0Xe4jyTOY31jr-AAcC4OV9FHFDau0XLYAhoaMMIehmI-aFoXIjM8uGe1TQ/exec', {
-    method: 'POST',
-    body: JSON.stringify({ email }),
-    headers: { 'Content-Type': 'application/json' }
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.result === "success") {
-      alert("이메일로 인증 코드가 발송되었습니다.");
-    } else {
-      alert("인증 코드 발송에 실패했습니다. 다시 시도해주세요.");
     }
   });
 });
@@ -91,12 +80,10 @@ window.onclick = function(event) {
     }
 }
 
-// 로컬 스토리지에서 타임캡슐 불러오기
 function loadCapsules() {
     return JSON.parse(localStorage.getItem('capsules') || '[]');
 }
 
-// 타임캡슐 화면에 표시
 function displayCapsules() {
     const capsulesDiv = document.getElementById('capsules');
     capsulesDiv.innerHTML = '';
@@ -115,11 +102,10 @@ function displayCapsules() {
             <p>상태: ${isOpen ? '개봉됨' : '미개봉'}</p>
             <p>생성일: ${DateTime.fromISO(capsule.created).toLocaleString()}</p>
             <p>개봉일: ${openDate.toLocaleString()}</p>
-            ${isOpen ? `<p>메시지: ${capsule.message}</p>` : '<p>아직 개봉되지 않았습니다.</p>'}
+            ${isOpen ? `<p>메시지: ${capsule.message}</p>` : ''}
         `;
         capsulesDiv.appendChild(capsuleDiv);
     });
 }
 
-// 페이지 로드 시 타임캡슐 표시
-window.addEventListener('load', displayCapsules);
+document.addEventListener('DOMContentLoaded', displayCapsules);
