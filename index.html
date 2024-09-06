@@ -172,7 +172,7 @@
           }
 
           // Google Apps Script로 데이터 전송
-          fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {  // Google Apps Script URL로 변경
+          fetch('https://script.google.com/macros/s/AKfycbwo4UpW-TLAoLFchKxPI1EOpN6seFos1jTJJcsezIQlBIX1LZLv96llwutuLloht4yAQA/exec', {  // Google Apps Script URL로 변경
             method: 'POST',
             body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO() }),
             headers: { 'Content-Type': 'application/json' }
