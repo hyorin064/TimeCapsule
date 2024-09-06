@@ -115,6 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const verificationCodeInput = document.getElementById('verificationCodeInput');
 
 
+
     if (form && verificationCodeInput) {
         form.addEventListener('submit', function(e) {
             e.preventDefault(); // 폼 제출 방지

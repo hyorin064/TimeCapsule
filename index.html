@@ -133,27 +133,27 @@
             <h2>새 타임캡슐 만들기</h2>
             <form id="capsuleForm">
                 <label for="title">제목:</label>
-                <input type="text" id="title" required>
-
+                <input type="text" id="title" name="title" autocomplete="on" required>
+            
                 <label for="message">메시지:</label>
-                <textarea id="message" required></textarea>
-
+                <textarea id="message" name="message" autocomplete="on" required></textarea>
+            
                 <label for="email">이메일:</label>
-                <input type="email" id="email" required>
-
+                <input type="email" id="email" name="email" autocomplete="email" required>
+            
                 <button id="verificationButton" type="button">인증 코드 받기</button>
-
+            
                 <label for="openTime">개봉 시간 (오늘 날짜 기준):</label>
-                <input type="datetime-local" id="openTime" required>
-
+                <input type="datetime-local" id="openTime" name="openTime" autocomplete="off" required>
+            
                 <label for="verificationCode">인증 코드:</label>
-                <input type="text" id="verificationCodeInput" />
-
-
+                <input type="text" id="verificationCodeInput" name="verificationCode" autocomplete="off" />
+            
                 <div id="dateError" class="error-message"></div>
                 
                 <button type="submit">타임캡슐 생성</button>
             </form>
+            
         </div>
     </div>
 
