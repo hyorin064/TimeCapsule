@@ -112,7 +112,8 @@ function displayCapsules() {
 document.addEventListener("DOMContentLoaded", function() {
     // 폼과 입력 요소를 찾고 이벤트 리스너를 추가합니다.
     const form = document.getElementById('capsuleForm');
-    const verificationCodeInput = document.getElementById('verificationCode');
+    const verificationCodeInput = document.getElementById('verificationCodeInput');
+
 
     if (form && verificationCodeInput) {
         form.addEventListener('submit', function(e) {
