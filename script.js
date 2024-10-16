@@ -3,21 +3,25 @@ const DateTime = luxon.DateTime;
 // 인증 코드 요청 버튼 클릭 이벤트
 document.getElementById('verificationButton').addEventListener('click', function() {
   const email = document.getElementById('email').value;
-  fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbxx0y_aIXcX3doRSi7-JkrSxjdJfsbL6ASkk9XsHTsoDk7Yg07x_4p2-BN1a93Fb55BdQ/exec', {
+  fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
     method: 'POST',
-    
+    mode: 'cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email })
   })
   .then(response => response.json())
   .then(data => {
+    console.log(data);
     if (data.result === 'success') {
       alert('인증 코드가 이메일로 발송되었습니다.');
     } else {
       alert('문제가 발생했습니다.');
     }
   })
-  .catch(error => console.error('Error:', error));
+  .catch(error => {
+    console.error('Error:', error);
+    alert('문제가 발생했습니다.');
+  });
 });
 
 // 타임캡슐 생성 폼 제출 이벤트
@@ -42,10 +46,11 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   }
 
   // Google Apps Script로 데이터 전송
-  fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbxx0y_aIXcX3doRSi7-JkrSxjdJfsbL6ASkk9XsHTsoDk7Yg07x_4p2-BN1a93Fb55BdQ/exec', {
+  fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
     method: 'POST',
-    body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode }),
-    headers: { 'Content-Type': 'application/json' }
+    mode: 'cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode })
   })
   .then(response => response.json())
   .then(data => {
@@ -57,6 +62,10 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
     } else {
       alert("인증 실패. 다시 시도해주세요.");
     }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert("요청 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
   });
 });
 
@@ -125,8 +134,3 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error('폼 또는 입력 요소를 찾을 수 없습니다.');
     }
 });
-
-
-
-
-
