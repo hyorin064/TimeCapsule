@@ -1,7 +1,7 @@
 const DateTime = luxon.DateTime;
 
 // Google Apps Script 웹앱 URL (실제 URL로 교체해야 합니다)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhULgBSNYJGA6bd8BTIlwPTa0gb76uUDJvlIuFM0m-T6xb1xRefNrZaNL_084gBJBaww/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzw3RmNDdSzTId9qdyqf5y95cpjm6toKRM6__fzD0Sk9SBX_b_PDY8PsNivAdRbDXYAHQ/exec';
 
 // 인증 코드 요청 버튼 클릭 이벤트
 document.getElementById('verificationButton').addEventListener('click', function() {
@@ -9,22 +9,26 @@ document.getElementById('verificationButton').addEventListener('click', function
   fetch(SCRIPT_URL, {
     method: 'POST',
     mode: 'cors',
-    credentials: 'omit',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
+    body: JSON.stringify({ email, action: 'sendVerification' })
   })
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
   .then(data => {
     console.log(data);
     if (data.result === 'success') {
       alert('인증 코드가 이메일로 발송되었습니다.');
     } else {
-      alert('문제가 발생했습니다.');
+      alert('문제가 발생했습니다: ' + data.message);
     }
   })
   .catch(error => {
     console.error('Error:', error);
-    alert('문제가 발생했습니다.');
+    alert('요청 처리 중 오류가 발생했습니다.');
   });
 });
 
@@ -53,11 +57,15 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   fetch(SCRIPT_URL, {
     method: 'POST',
     mode: 'cors',
-    credentials: 'omit',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode })
+    body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode, action: 'createCapsule' })
   })
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
   .then(data => {
     console.log("Server response:", data);
     if (data.result === "success") {
