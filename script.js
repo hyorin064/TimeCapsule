@@ -1,7 +1,7 @@
 const DateTime = luxon.DateTime;
 
 // Google Apps Script 웹앱 URL (실제 URL로 교체해야 합니다)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzxdvCnMN7USNe_0q_vSie66yeMHii7TZnmXjJZmvwQKSJQDnJjVS7wJmgBMrESnoylA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9qcrUJK09dmfTUvKQfjch4IpEFgUaQ_aAyc4pdHdeiOAMl8Bw0cD8Skg6fTSKGMDT0w/exec';
 
 // 인증 코드 요청 버튼 클릭 이벤트
 document.getElementById('verificationButton').addEventListener('click', function() {
