@@ -1,7 +1,7 @@
 const DateTime = luxon.DateTime;
 
 // Google Apps Script 웹앱 URL (실제 URL로 교체해야 합니다)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYk7RI_AgBanDDoy8IysShIvxvKotQD2GtuDtWP8PfRFD87UIQDRPR9Sby46UsEDXF-Q/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyq3RoxPpKb4wl8C7nw8ACdpyBJJmoFBiE27ORsdALsUbFTW3GqrulPlvw0w7skczpk0w/exec';
 
 // 인증 코드 요청 버튼 클릭 이벤트
 document.getElementById('verificationButton').addEventListener('click', async function() {
@@ -10,8 +10,10 @@ document.getElementById('verificationButton').addEventListener('click', async fu
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      mode: 'cors', // no-cors에서 cors로 변경
-      headers: { 'Content-Type': 'application/json' },
+      mode: 'cors', // CORS 모드 사용
+      headers: { 
+        'Content-Type': 'application/json' // JSON 콘텐츠 타입 지정
+      },
       body: JSON.stringify({ email, action: 'sendVerification' })
     });
 
@@ -50,8 +52,10 @@ document.getElementById('capsuleForm').addEventListener('submit', async function
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      mode: 'cors', // cors로 설정
-      headers: { 'Content-Type': 'application/json' },
+      mode: 'cors', // CORS 모드 사용
+      headers: { 
+        'Content-Type': 'application/json' // JSON 콘텐츠 타입 지정
+      },
       body: JSON.stringify({ 
         title, 
         message, 
