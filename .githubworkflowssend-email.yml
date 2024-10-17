@@ -1,0 +1,24 @@
+name: Send Email
+
+on:
+  schedule:
+    - cron: '0 * * * *' # 매 정시마다 실행
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Email
+        run: |
+          curl -X POST https://api.emailjs.com/api/v1.0/email/send \
+          -H "Content-Type: application/json" \
+          -d '{
+            "service_id": "YOUR_SERVICE_ID",
+            "template_id": "YOUR_TEMPLATE_ID",
+            "user_id": "YOUR_USER_ID",
+            "template_params": {
+              "to_email": "recipient@example.com",
+              "title": "타임캡슐 제목",
+              "content": "타임캡슐 내용"
+            }
+          }'
