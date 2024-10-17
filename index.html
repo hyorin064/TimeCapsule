@@ -3,17 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>타임캡슐</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function(){
-            emailjs.init({
-                publicKey: "ydode4YXJhGMuKwPL" // 여기에 퍼블릭 키를 입력
-            });
-        })();
-    </script>
-
+    <title>가상 타임캡슐</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,29 +12,35 @@
         <div id="capsules"></div>
     </div>
 
-    <button class="add-button" id="addButton">+</button>
+    <button id="addButton" class="add-button">+</button>
 
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>새 타임캡슐 만들기</h2>
             <form id="capsuleForm">
-                <label for="title">제목:</label>
-                <input type="text" id="title" name="title" autocomplete="on" required>
-                
-                <label for="content">내용:</label>
-                <textarea id="content" name="content" autocomplete="on" required></textarea>
-                
                 <label for="email">이메일:</label>
-                <input type="email" id="email" name="email" autocomplete="email" required>
+                <input type="email" id="email" required>
+                <button type="button" id="requestVerification">인증 코드 요청</button>
                 
-                <label for="openingTime">개봉 시간 (오늘 날짜 기준):</label>
-                <input type="datetime-local" id="openingTime" name="openingTime" required>
+                <label for="verificationCode">인증 코드:</label>
+                <input type="text" id="verificationCode" required>
+                <button type="button" id="verifyCode">인증 코드 확인</button>
                 
-                <div id="dateError" class="error-message"></div>
-                
-                <button type="submit">타임캡슐 생성</button>
+                <div id="capsuleFields" style="display: none;">
+                    <label for="title">제목:</label>
+                    <input type="text" id="title" required>
+                    
+                    <label for="content">내용:</label>
+                    <textarea id="content" required></textarea>
+                    
+                    <label for="openingTime">개봉 시간 (오늘 날짜 기준):</label>
+                    <input type="datetime-local" id="openingTime" required>
+                    
+                    <button type="submit">타임캡슐 생성</button>
+                </div>
             </form>
+            <div id="errorMessage" class="error-message"></div>
         </div>
     </div>
 
