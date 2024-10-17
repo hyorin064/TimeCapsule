@@ -1,13 +1,14 @@
 const DateTime = luxon.DateTime;
 
 // Google Apps Script 웹앱 URL (실제 URL로 교체해야 합니다)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwA38lPPkV1Vmhsg-At0rKBGT_HwM7NK6NpDifygmgPu1HTz0yOmYjgEcU6iqd2EkpmIg/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxOJ6l5GuD8UkFOuBS_noCZmOtH0d6NhEuQAFGCQAqZ2UUYWx8xDetmvTPGs0CI6Bl36A/exec';
 
 // 인증 코드 요청 버튼 클릭 이벤트
 document.getElementById('verificationButton').addEventListener('click', function() {
   const email = document.getElementById('email').value;
   fetch(SCRIPT_URL, {
     method: 'POST',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, action: 'sendVerification' })
   })
