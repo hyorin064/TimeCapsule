@@ -5,6 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("capsuleForm");
     const capsulesContainer = document.getElementById("capsules");
 
+    // Google Apps Script 웹 앱 URL
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxroPWV1AGGMqKmPeAgySGNNGVTM9kaDXOV-bgYutRA0oBNZAyCRVKIP5RYoIqm9Dlp3Q/exec';
+
     // 모달 열기
     addButton.onclick = function () {
         modal.style.display = "block";
@@ -25,20 +28,52 @@ document.addEventListener("DOMContentLoaded", function () {
     // 폼 제출 처리
     form.onsubmit = function (event) {
         event.preventDefault();
+
         const title = document.getElementById("title").value;
         const content = document.getElementById("content").value;
         const email = document.getElementById("email").value;
         const openingTime = document.getElementById("openingTime").value;
-    
-        // 타임캡슐 저장
-        addCapsuleToJSON(title, content, email, openingTime);
-    
+
+        if (!email) {
+            console.error("이메일 주소가 비어 있습니다.");
+            return;
+        }
+
+        // Google Apps Script 웹 앱에 데이터 제출
+        submitToGoogleSheet(title, content, email, openingTime);
+        
+        // 캡슐 카드 추가
         addCapsuleCard(title, content, email, openingTime);
+
+        // 모달 닫기
         modal.style.display = "none";
         form.reset();
     };
 
-    // 타임캡슐 카드 추가 함수
+    // Google Apps Script 웹 앱에 데이터 제출
+    function submitToGoogleSheet(title, content, email, openingTime) {
+        const data = {
+            title: title,
+            content: content,
+            email: email,
+            openingTime: openingTime
+        };
+
+        fetch(webAppUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            console.log('Data submitted successfully');
+        }).catch(error => {
+            console.error('Error submitting data:', error);
+        });
+    }
+
+    // 캡슐 카드 추가 함수
     function addCapsuleCard(title, content, email, openingTime) {
         const capsuleCard = document.createElement("div");
         capsuleCard.className = "capsule";
@@ -50,41 +85,4 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
         capsulesContainer.appendChild(capsuleCard);
     }
-
-    // 이메일 발송 예약 함수
-    function scheduleEmail(title, content, email, openingTime) {
-        const openingTimeDate = new Date(openingTime).getTime();
-        const currentTime = Date.now();
-
-        if (openingTimeDate > currentTime) {
-            const delay = openingTimeDate - currentTime;
-            setTimeout(function() {
-                sendEmail(title, content, email);
-            }, delay);
-        } else {
-            // 즉시 발송 (예: 개봉 시간이 이미 지나간 경우)
-            sendEmail(title, content, email);
-        }
-    }
-
-    // 이메일 발송 함수
-    function sendEmail(title, content, email) {
-        emailjs.send("VirtualTimeCapsule", "template_kjqohyc", {
-            title: title,
-            content: content,
-            email: email // 템플릿에서 사용할 email 변수
-        })
-        .then(function (response) {
-            console.log("이메일 발송 성공!", response.status, response.text);
-        }, function (error) {
-            console.log("이메일 발송 실패.", error);
-        });
-    }
 });
-
-function addCapsuleToJSON(title, content, email, openingTime) {
-    const capsule = { title, content, email, openingTime };
-    let capsules = JSON.parse(localStorage.getItem("capsules") || "[]");
-    capsules.push(capsule);
-    localStorage.setItem("capsules", JSON.stringify(capsules));
-}
