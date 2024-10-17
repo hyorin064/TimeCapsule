@@ -1,141 +1,54 @@
-const DateTime = luxon.DateTime;
-
-// Google Apps Script 웹앱 URL (실제 URL로 교체해야 합니다)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu7wL8qnOvP6X3TlNTYRJmwmvRSePIfqCoBEtcCEepwwASBfSoFI8enxrCAkO7Cb4HZg/exec';
-
-// 인증 코드 요청 버튼 클릭 이벤트
-document.getElementById('verificationButton').addEventListener('click', async function() {
-  const email = document.getElementById('email').value;
-
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'cors', // CORS 모드 사용
-      headers: { 
-        'Content-Type': 'application/json' // JSON 콘텐츠 타입 지정
-      },
-      body: JSON.stringify({ email, action: 'sendVerification' })
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP 오류 발생: ${response.status}`);
-    }
-
-    const data = await response.json(); // JSON 응답을 읽습니다.
-    alert('인증 코드가 이메일로 발송되었습니다.');
-  } catch (error) {
-    console.error('Error:', error);
-    alert('요청 처리 중 오류가 발생했습니다.');
-  }
+document.getElementById('addButton').addEventListener('click', function() {
+    document.getElementById('modal').style.display = 'block';
 });
 
-// 타임캡슐 생성 폼 제출 이벤트
-document.getElementById('capsuleForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  const title = document.getElementById('title').value;
-  const message = document.getElementById('message').value;
-  const email = document.getElementById('email').value;
-  const openTime = document.getElementById('openTime').value;
-  const verificationCode = document.getElementById('verificationCodeInput').value;
-
-  const now = DateTime.now();
-  const openDateTime = DateTime.fromISO(openTime);
-
-  if (openDateTime <= now.plus({ minutes: 1 })) {
-    document.getElementById('dateError').textContent = "개봉 시간은 현재 시각으로부터 최소 1분 이후여야 합니다.";
-    return;
-  } else {
-    document.getElementById('dateError').textContent = "";
-  }
-
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'cors', // CORS 모드 사용
-      headers: { 
-        'Content-Type': 'application/json' // JSON 콘텐츠 타입 지정
-      },
-      body: JSON.stringify({ 
-        title, 
-        message, 
-        email, 
-        openDate: openDateTime.toISO(), 
-        verificationCode, 
-        action: 'createCapsule' 
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP 오류 발생: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Response:', data);
-
-    if (data.result === 'verified') {
-      alert("이메일 인증이 완료되었습니다. 타임캡슐이 생성되었습니다.");
-    } else if (data.result === 'success') {
-      alert("이메일 인증을 확인하세요.");
-    } else {
-      alert("인증 실패. 다시 시도해주세요.");
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    alert("요청 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
-  }
+document.querySelector('.close').addEventListener('click', function() {
+    document.getElementById('modal').style.display = 'none';
 });
 
-// 모달 관련 코드
-const modal = document.getElementById('modal');
-const addButton = document.getElementById('addButton');
-const closeButton = document.getElementsByClassName('close')[0];
+document.getElementById('capsuleForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // 기본 제출 동작 방지
 
-// 모달 열기
-addButton.onclick = function() {
-  modal.style.display = "block";
-};
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    const openingTime = new Date(document.getElementById('openingTime').value);
+    const email = document.getElementById('email').value;
 
-// 모달 닫기
-closeButton.onclick = function() {
-  modal.style.display = "none";
-};
+    // 타임캡슐 정보를 로컬 스토리지에 저장
+    const capsule = {
+        title,
+        content,
+        openingTime,
+        email
+    };
 
-// 모달 외부 클릭 시 닫기
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-};
+    localStorage.setItem('capsule', JSON.stringify(capsule));
+    alert('타임캡슐이 저장되었습니다!');
 
-function loadCapsules() {
-  return JSON.parse(localStorage.getItem('capsules') || '[]');
+    // 개봉 시간이 되면 이메일을 전송하는 함수 호출
+    const now = new Date();
+    const delay = openingTime - now;
+
+    if (delay > 0) {
+        setTimeout(() => {
+            sendEmail(capsule);
+        }, delay);
+    }
+
+    // 모달 닫기
+    document.getElementById('modal').style.display = 'none';
+});
+
+function sendEmail(capsule) {
+    emailjs.send('VirtualTimeCapsule', 'template_kjqohyc', {
+        title: capsule.title,
+        content: capsule.content,
+        email: capsule.email
+    }, 'ydode4YXJhGMuKwPL')
+    .then((response) => {
+        alert('이메일이 성공적으로 전송되었습니다! ' + response.status);
+    }, (error) => {
+        alert('이메일 전송 실패: ' + error);
+    });
 }
 
-function displayCapsules() {
-  const capsulesDiv = document.getElementById('capsules');
-  capsulesDiv.innerHTML = '';
-
-  const capsules = loadCapsules();
-  const now = DateTime.now();
-
-  capsules.forEach((capsule) => {
-    const capsuleDiv = document.createElement('div');
-    capsuleDiv.className = 'capsule';
-    const openDate = DateTime.fromISO(capsule.openDate);
-    const isOpen = openDate <= now;
-
-    capsuleDiv.innerHTML = `
-      <h3>${capsule.title}</h3>
-      <p>상태: ${isOpen ? '개봉됨' : '미개봉'}</p>
-      <p>생성일: ${DateTime.fromISO(capsule.created).toLocaleString()}</p>
-      <p>개봉일: ${openDate.toLocaleString()}</p>
-      ${isOpen ? `<p>메시지: ${capsule.message}</p>` : ''}
-    `;
-    capsulesDiv.appendChild(capsuleDiv);
-  });
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-  displayCapsules();
-});
