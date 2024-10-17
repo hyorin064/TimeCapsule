@@ -1,31 +1,23 @@
 const DateTime = luxon.DateTime;
 
 // Google Apps Script 웹앱 URL (실제 URL로 교체해야 합니다)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw2PRLFskCbcyLSTZd-tNjT_dxw9yPQCp1pDusfETlc4k379D8stadosG-mVgOoPb3o3Q/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzxdvCnMN7USNe_0q_vSie66yeMHii7TZnmXjJZmvwQKSJQDnJjVS7wJmgBMrESnoylA/exec';
 
 // 인증 코드 요청 버튼 클릭 이벤트
 document.getElementById('verificationButton').addEventListener('click', function() {
   const email = document.getElementById('email').value;
   fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, action: 'sendVerification' })
+  method: 'POST',
+  mode: 'no-cors',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, action: 'sendVerification' })
   })
   .then(response => {
-    console.log('Response status:', response.status);
-    console.log('Response type:', response.type);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.text();
-  })
-  .then(data => {
-    console.log(data);
-    if (data.result === 'success') {
+    if (response.type === 'opaque') {
+      console.log('Request sent successfully');
       alert('인증 코드가 이메일로 발송되었습니다.');
     } else {
-      alert('문제가 발생했습니다: ' + data.message);
+      throw new Error('Unexpected response type');
     }
   })
   .catch(error => {
