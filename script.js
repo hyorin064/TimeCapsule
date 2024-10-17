@@ -8,7 +8,7 @@ document.getElementById('verificationButton').addEventListener('click', function
   const email = document.getElementById('email').value;
   fetch(SCRIPT_URL, {
     method: 'POST',
-    mode: 'cors',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, action: 'sendVerification' })
   })
@@ -56,7 +56,7 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   // Google Apps Script로 데이터 전송
   fetch(SCRIPT_URL, {
     method: 'POST',
-    mode: 'cors',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode, action: 'createCapsule' })
   })
