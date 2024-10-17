@@ -82,7 +82,6 @@ document.addEventListener("DOMContentLoaded", function () {
         capsuleCard.className = "capsule";
         capsuleCard.innerHTML = `
             <h3>${title}</h3>
-            <p>${content}</p>
             <p>개봉 시간: ${new Date(openingTime).toLocaleString()}</p>
             <p>이메일: ${email}</p>
         `;
