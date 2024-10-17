@@ -35,9 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("이메일 주소가 비어 있습니다.");
             return;
         }
-        console.log("제목:", title);
-        console.log("내용:", content);
-        console.log("이메일:", email);
 
         // 이메일 발송
         sendEmail(title, content, email);
@@ -52,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         emailjs.send("VirtualTimeCapsule", "template_kjqohyc", {
             title: title,
             content: content,
-            to_email: email
+            email: email // 템플릿에서 사용할 email 변수
         })
         .then(function (response) {
             console.log("이메일 발송 성공!", response.status, response.text);
