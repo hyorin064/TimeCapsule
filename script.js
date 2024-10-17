@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const errorMessage = document.getElementById("errorMessage");
 
     // Google Apps Script 웹 앱 URL
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwb7LI7fLz_BZHsQN73wEnApFYWfzMh32sm0oohWtc_VHZ18pWc_FdmmjKlQjt96GN31Q/exec';
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbw06ikH-_9ysOWEJsVZl1zVdyDwHcQ8l-i5noHkbuQk8VhpAt8BF_bEw7Cf61w1n2KTcw/exec';
 
     // 모달 열기
     addButton.onclick = function () {
@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         fetch(webAppUrl, {
             method: 'POST',
-            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
             },
