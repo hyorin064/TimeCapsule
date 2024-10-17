@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("modal");
     const closeButton = document.querySelector(".close");
     const form = document.getElementById("capsuleForm");
+    const capsulesContainer = document.getElementById("capsules");
 
     // 모달 열기
     addButton.onclick = function () {
@@ -36,13 +37,45 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // 이메일 발송
-        sendEmail(title, content, email);
+        // 타임캡슐 카드 추가
+        addCapsuleCard(title, content, email, openingTime);
+
+        // 이메일 발송 예약
+        scheduleEmail(title, content, email, openingTime);
         
         // 모달 닫기
         modal.style.display = "none";
         form.reset(); // 폼 리셋
     };
+
+    // 타임캡슐 카드 추가 함수
+    function addCapsuleCard(title, content, email, openingTime) {
+        const capsuleCard = document.createElement("div");
+        capsuleCard.className = "capsule";
+        capsuleCard.innerHTML = `
+            <h3>${title}</h3>
+            <p>${content}</p>
+            <p>개봉 시간: ${new Date(openingTime).toLocaleString()}</p>
+            <p>이메일: ${email}</p>
+        `;
+        capsulesContainer.appendChild(capsuleCard);
+    }
+
+    // 이메일 발송 예약 함수
+    function scheduleEmail(title, content, email, openingTime) {
+        const openingTimeDate = new Date(openingTime).getTime();
+        const currentTime = Date.now();
+
+        if (openingTimeDate > currentTime) {
+            const delay = openingTimeDate - currentTime;
+            setTimeout(function() {
+                sendEmail(title, content, email);
+            }, delay);
+        } else {
+            // 즉시 발송 (예: 개봉 시간이 이미 지나간 경우)
+            sendEmail(title, content, email);
+        }
+    }
 
     // 이메일 발송 함수
     function sendEmail(title, content, email) {
