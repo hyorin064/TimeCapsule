@@ -4,13 +4,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const closeButton = document.querySelector(".close");
     const form = document.getElementById("capsuleForm");
     const capsulesContainer = document.getElementById("capsules");
-    const requestVerificationButton = document.getElementById("requestVerification");
-    const verifyCodeButton = document.getElementById("verifyCode");
-    const capsuleFields = document.getElementById("capsuleFields");
-    const errorMessage = document.getElementById("errorMessage");
 
     // Google Apps Script 웹 앱 URL
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbw06ikH-_9ysOWEJsVZl1zVdyDwHcQ8l-i5noHkbuQk8VhpAt8BF_bEw7Cf61w1n2KTcw/exec';
+    const webAppUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+
+    // 페이지 로드 시 캡슐 데이터 불러오기
+    loadCapsules();
 
     // 모달 열기
     addButton.onclick = function () {
@@ -20,63 +19,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // 모달 닫기
     closeButton.onclick = function () {
         modal.style.display = "none";
-        resetForm();
     };
 
     // 모달 외부 클릭 시 닫기
     window.onclick = function (event) {
         if (event.target === modal) {
             modal.style.display = "none";
-            resetForm();
         }
-    };
-
-    // 인증 코드 요청
-    requestVerificationButton.onclick = function () {
-        const email = document.getElementById("email").value;
-        if (!email) {
-            showError("이메일 주소를 입력해주세요.");
-            return;
-        }
-        fetch(webAppUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ action: 'requestCode', email: email })
-        }).then(() => {
-            showError("인증 코드가 이메일로 전송되었습니다.", false);
-        }).catch(error => {
-            showError("인증 코드 전송 중 오류가 발생했습니다.");
-        });
-    };
-
-    // 인증 코드 확인
-    verifyCodeButton.onclick = function () {
-        const email = document.getElementById("email").value;
-        const code = document.getElementById("verificationCode").value;
-        if (!email || !code) {
-            showError("이메일과 인증 코드를 모두 입력해주세요.");
-            return;
-        }
-        fetch(webAppUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ action: 'verifyCode', email: email, code: code })
-        }).then(response => response.json())
-        .then(data => {
-            if (data.verified) {
-                showError("이메일이 인증되었습니다.", false);
-                capsuleFields.style.display = "block";
-            } else {
-                showError("인증 코드가 일치하지 않습니다.");
-            }
-        }).catch(error => {
-            showError("인증 과정 중 오류가 발생했습니다.");
-        });
     };
 
     // 폼 제출 처리
@@ -88,8 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const email = document.getElementById("email").value;
         const openingTime = document.getElementById("openingTime").value;
 
-        if (!email || !title || !content || !openingTime) {
-            showError("모든 필드를 입력해주세요.");
+        if (!email) {
+            console.error("이메일 주소가 비어 있습니다.");
             return;
         }
 
@@ -101,13 +50,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // 모달 닫기
         modal.style.display = "none";
-        resetForm();
+        form.reset();
     };
 
     // Google Apps Script 웹 앱에 데이터 제출
     function submitToGoogleSheet(title, content, email, openingTime) {
         const data = {
-            action: 'submitCapsule',
             title: title,
             content: content,
             email: email,
@@ -141,16 +89,20 @@ document.addEventListener("DOMContentLoaded", function () {
         capsulesContainer.appendChild(capsuleCard);
     }
 
-    // 에러 메시지 표시 함수
-    function showError(message, isError = true) {
-        errorMessage.textContent = message;
-        errorMessage.style.color = isError ? "red" : "green";
-    }
-
-    // 폼 초기화 함수
-    function resetForm() {
-        form.reset();
-        capsuleFields.style.display = "none";
-        errorMessage.textContent = "";
+    // Google Sheets에서 캡슐 데이터 불러오기
+    function loadCapsules() {
+        fetch(webAppUrl + '?action=getCapsules')
+            .then(response => response.json())
+            .then(data => {
+                capsulesContainer.innerHTML = ''; // 기존 캡슐 카드 초기화
+                data.capsules.forEach(capsule => {
+                    if (capsule.sent !== 'TRUE') {
+                        addCapsuleCard(capsule.title, capsule.content, capsule.email, capsule.openingTime);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading capsules:', error);
+            });
     }
 });
