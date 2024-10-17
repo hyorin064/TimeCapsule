@@ -24,28 +24,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 폼 제출 처리
     form.onsubmit = function (event) {
-        event.preventDefault(); // 기본 제출 방지
-
+        event.preventDefault();
         const title = document.getElementById("title").value;
         const content = document.getElementById("content").value;
-        const email = document.getElementById("email").value; // 이메일 주소 가져오기
+        const email = document.getElementById("email").value;
         const openingTime = document.getElementById("openingTime").value;
-
-        // 이메일이 비어 있는지 확인
-        if (!email) {
-            console.error("이메일 주소가 비어 있습니다.");
-            return;
-        }
-
-        // 타임캡슐 카드 추가
+    
+        // 타임캡슐 저장
+        addCapsuleToJSON(title, content, email, openingTime);
+    
         addCapsuleCard(title, content, email, openingTime);
-
-        // 이메일 발송 예약
-        scheduleEmail(title, content, email, openingTime);
-        
-        // 모달 닫기
         modal.style.display = "none";
-        form.reset(); // 폼 리셋
+        form.reset();
     };
 
     // 타임캡슐 카드 추가 함수
@@ -91,3 +81,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+function addCapsuleToJSON(title, content, email, openingTime) {
+    const capsule = { title, content, email, openingTime };
+    let capsules = JSON.parse(localStorage.getItem("capsules") || "[]");
+    capsules.push(capsule);
+    localStorage.setItem("capsules", JSON.stringify(capsules));
+}
