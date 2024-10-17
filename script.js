@@ -13,10 +13,13 @@ document.getElementById('verificationButton').addEventListener('click', function
     body: JSON.stringify({ email, action: 'sendVerification' })
   })
   .then(response => {
+    console.log('Response status:', response.status);
+    console.log('Response type:', response.type);
+    
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return response.json();
+    return response.text();
   })
   .then(data => {
     console.log(data);
