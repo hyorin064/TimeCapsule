@@ -1,88 +1,63 @@
-// EmailJS 초기화
-(function(){
-    emailjs.init("ydode4YXJhGMuKwPL"); // 사용자 ID로 초기화
-})();
+document.addEventListener("DOMContentLoaded", function () {
+    const addButton = document.getElementById("addButton");
+    const modal = document.getElementById("modal");
+    const closeButton = document.querySelector(".close");
+    const form = document.getElementById("capsuleForm");
 
-// DOM 요소 선택
-const modal = document.getElementById("modal");
-const addButton = document.getElementById("addButton");
-const closeModal = document.querySelector(".close");
-const capsuleForm = document.getElementById("capsuleForm");
-const capsulesContainer = document.getElementById("capsules");
+    // 모달 열기
+    addButton.onclick = function () {
+        modal.style.display = "block";
+    };
 
-// 모달 열기
-addButton.onclick = function() {
-    modal.style.display = "block";
-}
-
-// 모달 닫기
-closeModal.onclick = function() {
-    modal.style.display = "none";
-}
-
-// 모달 외부 클릭 시 닫기
-window.onclick = function(event) {
-    if (event.target === modal) {
+    // 모달 닫기
+    closeButton.onclick = function () {
         modal.style.display = "none";
-    }
-}
+    };
 
-// 폼 제출 이벤트 처리
-capsuleForm.addEventListener("submit", function(event) {
-    event.preventDefault();
+    // 모달 외부 클릭 시 닫기
+    window.onclick = function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
 
-    const title = document.getElementById("title").value;
-    const content = document.getElementById("content").value;
-    const email = document.getElementById("email").value;
-    const openingTime = document.getElementById("openingTime").value;
+    // 폼 제출 처리
+    form.onsubmit = function (event) {
+        event.preventDefault(); // 기본 제출 방지
 
-    const openingDate = new Date(openingTime);
-    const currentDate = new Date();
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
+        const email = document.getElementById("email").value; // 이메일 주소 가져오기
+        const openingTime = document.getElementById("openingTime").value;
 
-    // 개봉 시간이 지나지 않았을 경우
-    if (openingDate > currentDate) {
-        const timeDifference = openingDate - currentDate;
+        // 이메일이 비어 있는지 확인
+        if (!email) {
+            console.error("이메일 주소가 비어 있습니다.");
+            return;
+        }
+        console.log("제목:", title);
+        console.log("내용:", content);
+        console.log("이메일:", email);
 
-        // 일정 시간 후에 이메일 발송
-        setTimeout(() => {
-            sendEmail(title, content, email);
-        }, timeDifference);
+        // 이메일 발송
+        sendEmail(title, content, email);
         
-        // 타임캡슐 추가
-        addCapsule(title, content, openingDate);
+        // 모달 닫기
+        modal.style.display = "none";
+        form.reset(); // 폼 리셋
+    };
 
-        alert("타임캡슐이 생성되었습니다!");
-        modal.style.display = "none"; // 모달 닫기
-    } else {
-        alert("개봉 시간은 현재 시간 이후여야 합니다.");
+    // 이메일 발송 함수
+    function sendEmail(title, content, email) {
+        emailjs.send("VirtualTimeCapsule", "template_kjqohyc", {
+            title: title,
+            content: content,
+            to_email: email
+        })
+        .then(function (response) {
+            console.log("이메일 발송 성공!", response.status, response.text);
+        }, function (error) {
+            console.log("이메일 발송 실패.", error);
+        });
     }
-
-    // 폼 초기화
-    this.reset();
 });
-
-// 이메일 발송 함수
-function sendEmail(title, content, email) {
-    emailjs.send("VirtualTimeCapsule", "template_kjqohyc", {
-        title: title,
-        content: content,
-        to_email: email
-    })
-    .then(function(response) {
-        console.log("이메일 발송 성공!", response.status, response.text);
-    }, function(error) {
-        console.log("이메일 발송 실패.", error);
-    });
-}
-
-// 타임캡슐 추가 함수
-function addCapsule(title, content, openingDate) {
-    const capsuleDiv = document.createElement("div");
-    capsuleDiv.classList.add("capsule");
-    capsuleDiv.innerHTML = `
-        <h3>${title}</h3>
-        <p>${content}</p>
-        <p><strong>개봉 시간:</strong> ${openingDate.toLocaleString()}</p>
-    `;
-    capsulesContainer.appendChild(capsuleDiv);
-}
