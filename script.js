@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const capsulesContainer = document.getElementById("capsules");
 
     // Google Apps Script 웹 앱 URL
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbzq3MGKfBiHWZYH3Xzd5ZiA0MWVxBmkC-hpd2J4twnSI2CCFk_l0FsKsjg8_3aYbmorBQ/exec';
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwLnwWfFA1EO3c6rYKddTQcTsBZt1EVknEQTWwc91ZwxlxxPsG0r92ziokT13wJfqQkhA/exec';
 
     // 페이지 로드 시 캡슐 데이터 불러오기
     loadCapsules();
