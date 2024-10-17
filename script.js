@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const errorMessage = document.getElementById("errorMessage");
 
     // Google Apps Script 웹 앱 URL
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxroPWV1AGGMqKmPeAgySGNNGVTM9kaDXOV-bgYutRA0oBNZAyCRVKIP5RYoIqm9Dlp3Q/exec';
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwb7LI7fLz_BZHsQN73wEnApFYWfzMh32sm0oohWtc_VHZ18pWc_FdmmjKlQjt96GN31Q/exec';
 
     // 모달 열기
     addButton.onclick = function () {
