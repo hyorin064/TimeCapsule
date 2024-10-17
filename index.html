@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>타임캡슐</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
         (function(){
-            emailjs.init("YOUR_EMAILJS_USER_ID"); // 사용자 ID로 초기화
+            emailjs.init({
+                publicKey: "ydode4YXJhGMuKwPL" // 여기에 퍼블릭 키를 입력
+            });
         })();
     </script>
 
