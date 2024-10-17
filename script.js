@@ -1,54 +1,88 @@
-document.getElementById('addButton').addEventListener('click', function() {
-    document.getElementById('modal').style.display = 'block';
-});
+// EmailJS 초기화
+(function(){
+    emailjs.init("ydode4YXJhGMuKwPL"); // 사용자 ID로 초기화
+})();
 
-document.querySelector('.close').addEventListener('click', function() {
-    document.getElementById('modal').style.display = 'none';
-});
+// DOM 요소 선택
+const modal = document.getElementById("modal");
+const addButton = document.getElementById("addButton");
+const closeModal = document.querySelector(".close");
+const capsuleForm = document.getElementById("capsuleForm");
+const capsulesContainer = document.getElementById("capsules");
 
-document.getElementById('capsuleForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // 기본 제출 동작 방지
+// 모달 열기
+addButton.onclick = function() {
+    modal.style.display = "block";
+}
 
-    const title = document.getElementById('title').value;
-    const content = document.getElementById('content').value;
-    const openingTime = new Date(document.getElementById('openingTime').value);
-    const email = document.getElementById('email').value;
+// 모달 닫기
+closeModal.onclick = function() {
+    modal.style.display = "none";
+}
 
-    // 타임캡슐 정보를 로컬 스토리지에 저장
-    const capsule = {
-        title,
-        content,
-        openingTime,
-        email
-    };
+// 모달 외부 클릭 시 닫기
+window.onclick = function(event) {
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+}
 
-    localStorage.setItem('capsule', JSON.stringify(capsule));
-    alert('타임캡슐이 저장되었습니다!');
+// 폼 제출 이벤트 처리
+capsuleForm.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-    // 개봉 시간이 되면 이메일을 전송하는 함수 호출
-    const now = new Date();
-    const delay = openingTime - now;
+    const title = document.getElementById("title").value;
+    const content = document.getElementById("content").value;
+    const email = document.getElementById("email").value;
+    const openingTime = document.getElementById("openingTime").value;
 
-    if (delay > 0) {
+    const openingDate = new Date(openingTime);
+    const currentDate = new Date();
+
+    // 개봉 시간이 지나지 않았을 경우
+    if (openingDate > currentDate) {
+        const timeDifference = openingDate - currentDate;
+
+        // 일정 시간 후에 이메일 발송
         setTimeout(() => {
-            sendEmail(capsule);
-        }, delay);
+            sendEmail(title, content, email);
+        }, timeDifference);
+        
+        // 타임캡슐 추가
+        addCapsule(title, content, openingDate);
+
+        alert("타임캡슐이 생성되었습니다!");
+        modal.style.display = "none"; // 모달 닫기
+    } else {
+        alert("개봉 시간은 현재 시간 이후여야 합니다.");
     }
 
-    // 모달 닫기
-    document.getElementById('modal').style.display = 'none';
+    // 폼 초기화
+    this.reset();
 });
 
-function sendEmail(capsule) {
-    emailjs.send('VirtualTimeCapsule', 'template_kjqohyc', {
-        title: capsule.title,
-        content: capsule.content,
-        email: capsule.email
-    }, 'ydode4YXJhGMuKwPL')
-    .then((response) => {
-        alert('이메일이 성공적으로 전송되었습니다! ' + response.status);
-    }, (error) => {
-        alert('이메일 전송 실패: ' + error);
+// 이메일 발송 함수
+function sendEmail(title, content, email) {
+    emailjs.send("VirtualTimeCapsule", "template_kjqohyc", {
+        title: title,
+        content: content,
+        to_email: email
+    })
+    .then(function(response) {
+        console.log("이메일 발송 성공!", response.status, response.text);
+    }, function(error) {
+        console.log("이메일 발송 실패.", error);
     });
 }
 
+// 타임캡슐 추가 함수
+function addCapsule(title, content, openingDate) {
+    const capsuleDiv = document.createElement("div");
+    capsuleDiv.classList.add("capsule");
+    capsuleDiv.innerHTML = `
+        <h3>${title}</h3>
+        <p>${content}</p>
+        <p><strong>개봉 시간:</strong> ${openingDate.toLocaleString()}</p>
+    `;
+    capsulesContainer.appendChild(capsuleDiv);
+}
