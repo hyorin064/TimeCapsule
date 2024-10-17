@@ -1,14 +1,13 @@
 const DateTime = luxon.DateTime;
 
 // Google Apps Script 웹앱 URL (실제 URL로 교체해야 합니다)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVXtKZ3rD4mMkTzGSpYWP_4GMeJuq1z_R0FMdLu6XOSOMnD7YRpy1-k8J8forjCTsQTg/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw2PRLFskCbcyLSTZd-tNjT_dxw9yPQCp1pDusfETlc4k379D8stadosG-mVgOoPb3o3Q/exec';
 
 // 인증 코드 요청 버튼 클릭 이벤트
 document.getElementById('verificationButton').addEventListener('click', function() {
   const email = document.getElementById('email').value;
   fetch(SCRIPT_URL, {
     method: 'POST',
-    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, action: 'sendVerification' })
   })
@@ -59,7 +58,6 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   // Google Apps Script로 데이터 전송
   fetch(SCRIPT_URL, {
     method: 'POST',
-    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode, action: 'createCapsule' })
   })
