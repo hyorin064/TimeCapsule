@@ -7,17 +7,16 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzxdvCnMN7USNe_0q_v
 document.getElementById('verificationButton').addEventListener('click', function() {
   const email = document.getElementById('email').value;
   fetch(SCRIPT_URL, {
-  method: 'POST',
-  mode: 'no-cors',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, action: 'sendVerification' })
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, action: 'sendVerification' })
   })
-  .then(response => {
-    if (response.type === 'opaque') {
-      console.log('Request sent successfully');
+  .then(response => response.json())
+  .then(data => {
+    if (data.result === "success") {
       alert('인증 코드가 이메일로 발송되었습니다.');
     } else {
-      throw new Error('Unexpected response type');
+      throw new Error('인증 코드 전송 실패: ' + (data.message || 'Unknown error'));
     }
   })
   .catch(error => {
@@ -50,22 +49,15 @@ document.getElementById('capsuleForm').addEventListener('submit', function(e) {
   // Google Apps Script로 데이터 전송
   fetch(SCRIPT_URL, {
     method: 'POST',
-    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title, message, email, openDate: openDateTime.toISO(), verificationCode, action: 'createCapsule' })
   })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json();
-  })
+  .then(response => response.json())
   .then(data => {
-    console.log("Server response:", data);
-    if (data.result === "success") {
-      alert("이메일 인증을 확인하세요.");
-    } else if (data.result === "verified") {
+    if (data.result === "verified") {
       alert("이메일 인증이 완료되었습니다. 타임캡슐이 생성되었습니다.");
+    } else if (data.result === "success") {
+      alert("이메일 인증을 확인하세요.");
     } else {
       alert("인증 실패. 다시 시도해주세요.");
     }
