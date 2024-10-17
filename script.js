@@ -1,7 +1,7 @@
 const DateTime = luxon.DateTime;
 
 // Google Apps Script 웹앱 URL (실제 URL로 교체해야 합니다)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzwvh0QqZG03C7HIyURvzIAH1TzytVjhlnQ-m19lK9vFZlXxYY56h0hV-71B0yg-bVYxA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYk7RI_AgBanDDoy8IysShIvxvKotQD2GtuDtWP8PfRFD87UIQDRPR9Sby46UsEDXF-Q/exec';
 
 // 인증 코드 요청 버튼 클릭 이벤트
 document.getElementById('verificationButton').addEventListener('click', async function() {
@@ -10,12 +10,16 @@ document.getElementById('verificationButton').addEventListener('click', async fu
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      mode: 'no-cors',
+      mode: 'cors', // no-cors에서 cors로 변경
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, action: 'sendVerification' })
     });
 
-    // no-cors 모드에서는 응답을 읽을 수 없으므로, 성공 여부만 확인합니다.
+    if (!response.ok) {
+      throw new Error(`HTTP 오류 발생: ${response.status}`);
+    }
+
+    const data = await response.json(); // JSON 응답을 읽습니다.
     alert('인증 코드가 이메일로 발송되었습니다.');
   } catch (error) {
     console.error('Error:', error);
@@ -46,7 +50,7 @@ document.getElementById('capsuleForm').addEventListener('submit', async function
   try {
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      mode: 'cors',
+      mode: 'cors', // cors로 설정
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         title, 
@@ -62,7 +66,7 @@ document.getElementById('capsuleForm').addEventListener('submit', async function
       throw new Error(`HTTP 오류 발생: ${response.status}`);
     }
 
-    const data = await response.json(); // 응답이 JSON 형태라고 가정
+    const data = await response.json();
     console.log('Response:', data);
 
     if (data.result === 'verified') {
