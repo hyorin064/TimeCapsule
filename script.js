@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 모달 관련 이벤트 핸들러들
     closeLoginButton.onclick = function() {
         if (!currentUserEmail) {
-            alert("이메일을 입력해주세요!");
+            alert("자신의 이메일을 입력해주세요!\n입력한 이메일로 타임캡슐이 발송됩니다!");
             return;
         }
         loginModal.style.display = "none";
