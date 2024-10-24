@@ -4,16 +4,54 @@ document.addEventListener("DOMContentLoaded", function () {
     const closeButton = document.querySelector(".close");
     const form = document.getElementById("capsuleForm");
     const capsulesContainer = document.getElementById("capsules");
+    
+    // 현재 로그인한 사용자의 이메일을 저장할 변수
+    let currentUserEmail = '';
 
     // Google Apps Script 웹 앱 URL
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbwLnwWfFA1EO3c6rYKddTQcTsBZt1EVknEQTWwc91ZwxlxxPsG0r92ziokT13wJfqQkhA/exec';
 
-    // 페이지 로드 시 캡슐 데이터 불러오기
-    loadCapsules();
+    // 이메일 입력 받기
+    function promptForEmail() {
+        const email = localStorage.getItem('userEmail');
+        if (email) {
+            currentUserEmail = email;
+            loadCapsules();
+        } else {
+            const userEmail = prompt("이메일 주소를 입력해주세요:");
+            if (userEmail) {
+                currentUserEmail = userEmail;
+                localStorage.setItem('userEmail', userEmail);
+                loadCapsules();
+            }
+        }
+    }
+
+    // 로그아웃 버튼 추가
+    const logoutButton = document.createElement('button');
+    logoutButton.textContent = '로그아웃';
+    logoutButton.className = 'logout-button';
+    logoutButton.onclick = function() {
+        localStorage.removeItem('userEmail');
+        currentUserEmail = '';
+        capsulesContainer.innerHTML = '';
+        promptForEmail();
+    };
+    document.querySelector('.container').insertBefore(logoutButton, capsulesContainer);
+
+    // 페이지 로드 시 이메일 확인
+    promptForEmail();
 
     // 모달 열기
     addButton.onclick = function () {
+        if (!currentUserEmail) {
+            promptForEmail();
+            return;
+        }
         modal.style.display = "block";
+        // 이메일 필드에 현재 사용자 이메일 자동 입력
+        document.getElementById("email").value = currentUserEmail;
+        document.getElementById("email").readOnly = true; // 이메일 수정 방지
     };
 
     // 모달 닫기
@@ -34,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const title = document.getElementById("title").value;
         const content = document.getElementById("content").value;
-        const email = document.getElementById("email").value;
+        const email = currentUserEmail; // 현재 사용자 이메일 사용
         const openingTime = document.getElementById("openingTime").value;
 
         if (!email) {
@@ -83,19 +121,21 @@ document.addEventListener("DOMContentLoaded", function () {
         capsuleCard.innerHTML = `
             <h3>${title}</h3>
             <p>개봉 시간: ${new Date(openingTime).toLocaleString()}</p>
-            <p>이메일: ${email}</p>
         `;
         capsulesContainer.appendChild(capsuleCard);
     }
 
     // Google Sheets에서 캡슐 데이터 불러오기
     function loadCapsules() {
+        if (!currentUserEmail) return;
+
         fetch(webAppUrl + '?action=getCapsules')
             .then(response => response.json())
             .then(data => {
                 capsulesContainer.innerHTML = ''; // 기존 캡슐 카드 초기화
                 data.capsules.forEach(capsule => {
-                    if (capsule.sent !== 'TRUE') {
+                    // 현재 사용자의 캡슐만 표시
+                    if (capsule.email === currentUserEmail && capsule.sent !== 'TRUE') {
                         addCapsuleCard(capsule.title, capsule.content, capsule.email, capsule.openingTime);
                     }
                 });

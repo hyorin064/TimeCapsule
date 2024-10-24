@@ -117,3 +117,23 @@ button[type="submit"]:hover {
     color: red;
     margin-top: 5px;
 }
+
+.logout-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
+
+#email {
+    background-color: #f8f9fa;
+}
