@@ -66,50 +66,68 @@ h1 {
     width: 80%;
     max-width: 500px;
     border-radius: 10px;
+    position: relative;
 }
 
-.close {
+.close, .close-login {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 10px;
 }
 
 .close:hover,
-.close:focus {
+.close:focus,
+.close-login:hover,
+.close-login:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
+.form-group {
+    margin-bottom: 20px;
 }
 
-label {
-    margin-top: 10px;
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #666;
 }
 
-textarea, input {
-    margin-top: 5px;
-    padding: 5px;
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    box-sizing: border-box;
 }
 
-button[type="submit"] {
-    margin-top: 15px;
-    padding: 10px;
+.form-group textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+button[type="submit"],
+.login-button {
     background-color: #007bff;
     color: white;
+    padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 16px;
+    width: 100%;
 }
 
-button[type="submit"]:hover {
+button[type="submit"]:hover,
+.login-button:hover {
     background-color: #0056b3;
 }
 
@@ -132,6 +150,17 @@ button[type="submit"]:hover {
 
 .logout-button:hover {
     background-color: #c82333;
+}
+
+#loginModal .modal-content {
+    max-width: 400px;
+    text-align: center;
+    padding: 30px;
+}
+
+#loginModal h2 {
+    margin-bottom: 20px;
+    color: #333;
 }
 
 #email {
